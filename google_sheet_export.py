@@ -8,6 +8,8 @@ import pandas as pd
 from urllib.request import urlopen
 from io import StringIO
 from itertools import combinations
+import os
+import time
 
 today = datetime.date.today()
 csv_file_name = 'kimittud_{}.csv'.format(today)
@@ -16,6 +18,8 @@ names = ['ÁDÁM','ALEX','BALU','BELLA','BORCSA','BORI','DÁVID','DORINA','DORKA
          'SANYI','SÁRI','TAKI','VANDA','VERONKA']
 uniformity_table = pd.DataFrame()
 processed_name = csv_file_name + "-processed" + ".csv"
+list_of_applicants = ['ÁDÁM','ALEX','BALU','BELLA','BORCSA','BORI','DÁVID','DORINA','DORKA','EMMA']
+
 
 def DownloadSheets():
 # Define the scope and credentials
@@ -37,14 +41,16 @@ def DownloadSheets():
         writer.writerows(data)
     print(f"CSV file '{csv_file_name}' saved successfully!")
 
+
 def ProcessCSV():
     df = pd.read_csv(csv_file_name, encoding='ISO-8859-1')
     # df = pd.read_csv(csv_file_name)
     df.drop(df.columns[[0,1,3,4,5,6,7,8,9,-1]], axis=1, inplace=True)
-    #delete empty rows:
+    #delete empty rows based on the last value of column 'ÁDÁM':
     column_to_check = 'ÁDÁM'
     df.dropna(subset=column_to_check, inplace=True)
     df.to_csv(processed_name)
+
 
 def CreateUniformityTable():
     # df = pd.read_csv(processed_name, encoding='ISO-8859-1')
@@ -76,29 +82,47 @@ def CreateUniformityTable():
     uniformity_table.to_csv('uniformity_table.csv')
     return df
 
-def GenerateMasterDatabase(number_of_gamemasters):
+
+# input: (number of gamemasters for the event, list of gamemasters applying for an event)
+def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
     variations_database = pd.read_csv(processed_name)
-    variations_database.drop(variations_database.columns[[0,1,-1,-2,-3,-4]], axis=1, inplace=True)
-    variations_database.drop(variations_database.index[0], inplace=True)
-    variations_database.drop(variations_database.index[0], inplace=True)
+    # print(variations_database)
+    # drop unnecessary columns: last 4 and first
+    variations_database.drop(variations_database.columns[[0,-1,-2,-3,-4]], axis=1, inplace=True)
+    # variations_database.drop(variations_database.index[0], inplace=True)
+    # variations_database.drop(variations_database.index[0], inplace=True)
     # dataframe info:
     # variations_database.info()
     # print(variations_database.shape)
     # print("no-of-columns: ")
     # print(len(variations_database.columns))
     # print(variations_database)
+    print(variations_database)
+    # number of applicants per pillanat az összes létező játékmester (kb. 25 ember), de át kell írni a jelentkezők listájára
     number_of_applicants = len(variations_database.columns)-1 # az első oszlop a játék oszlop
-    # print(len(variations_database))
-    combination_list_of_gamemasters = list(combinations(range(0,number_of_applicants),number_of_gamemasters))
-    # print(combination_list_of_gamemasters[15][2])
-    # print(variations_database.iloc[:,12])
+    print(len(variations_database))
+    combination_list_of_gamemasters = list(combinations(list_of_applicants,number_of_gamemasters))
+    # print(combination_list_of_gamemasters)
+    # print(len(combination_list_of_gamemasters))
+    # print(len(list_of_applicants))
+    # print(combination_list_of_gamemasters[15]) # 15. variáció
+    # print(variations_database.iloc[:,12]) # 12. oszlopa a kimittudnak
+    # a kimittud adott névhez tartozó sorszám oszlopa:
+    # print(variations_database.iloc[:,10])
+    # print(variations_database.iloc[10,:])
+    # a kimittud adott névhez tartozó oszlopa:
+    # print(variations_database["BORCSA"])
+    max = len(combination_list_of_gamemasters)
+    count = 0
     for comb in combination_list_of_gamemasters:
+        count += 1
         number_of_games_over_57percent = 0
         list_of_games_over_57percent = []
         comb_evaluation_dataframe = pd.DataFrame()
         for i in range(0, number_of_gamemasters):
-            comb_evaluation_dataframe[comb[i]] = variations_database.iloc[:,comb[i]]
-        # print(comb_evaluation_dataframe)
+            comb_evaluation_dataframe[comb[i]] = variations_database[comb[i]]
+            # comb_evaluation_dataframe[comb[i]] = variations_database.iloc[:, comb[i]]
+
         for j in range(2, len(comb_evaluation_dataframe)):
             gamemasters_with_2_of_given_game = 0
             for k in range(0, number_of_gamemasters):
@@ -107,12 +131,14 @@ def GenerateMasterDatabase(number_of_gamemasters):
                     gamemasters_with_2_of_given_game += 1
             # print(gamemasters_with_2_of_given_game)
             if (gamemasters_with_2_of_given_game > 3):
-                list_of_games_over_57percent.append(j)
+                # list_of_games_over_57percent.append(variations_database[j])
+                list_of_games_over_57percent.append(str(j) + " - " + str(variations_database.iloc[j,0]))
                 number_of_games_over_57percent += 1
         print(str(number_of_games_over_57percent) + " - " + str(list(comb)) + "\n")
         print(list(list_of_games_over_57percent), "\n")
     return 0
+
 # DownloadSheets()
 # ProcessCSV()
 # CreateUniformityTable()
-GenerateMasterDatabase(6)
+GenerateMasterDatabase(6, list_of_applicants)

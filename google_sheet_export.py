@@ -19,6 +19,7 @@ names = ['ÁDÁM','ALEX','BALU','BELLA','BORCSA','BORI','DÁVID','DORINA','DORKA
 uniformity_table = pd.DataFrame()
 processed_name = csv_file_name + "-processed" + ".csv"
 list_of_applicants = ['ÁDÁM','ALEX','BALU','BELLA','BORCSA','BORI','DÁVID','DORINA','DORKA','EMMA']
+date = '2024-04-22'
 
 
 def DownloadSheets():
@@ -84,7 +85,7 @@ def CreateUniformityTable():
 
 
 # input: (number of gamemasters for the event, list of gamemasters applying for an event)
-def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
+def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants, date):
     variations_database = pd.read_csv(processed_name)
     # print(variations_database)
     # drop unnecessary columns: last 4 and first
@@ -97,10 +98,10 @@ def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
     # print("no-of-columns: ")
     # print(len(variations_database.columns))
     # print(variations_database)
-    print(variations_database)
+    # print(variations_database)
     # number of applicants per pillanat az összes létező játékmester (kb. 25 ember), de át kell írni a jelentkezők listájára
-    number_of_applicants = len(variations_database.columns)-1 # az első oszlop a játék oszlop
-    print(len(variations_database))
+    # number_of_applicants = len(variations_database.columns)-1 # az első oszlop a játék oszlop
+    # print(len(variations_database))
     combination_list_of_gamemasters = list(combinations(list_of_applicants,number_of_gamemasters))
     # print(combination_list_of_gamemasters)
     # print(len(combination_list_of_gamemasters))
@@ -112,8 +113,15 @@ def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
     # print(variations_database.iloc[10,:])
     # a kimittud adott névhez tartozó oszlopa:
     # print(variations_database["BORCSA"])
-    max = len(combination_list_of_gamemasters)
+    # max = len(combination_list_of_gamemasters)
+    # print(max)
     count = 0
+    dict_of_results = {}
+    # create external file for results
+        # dirname = os.path.dirname(__file__)
+        # new_folder = "{}-variations".format(date)
+        # path = os.path.join(dirname,new_folder)
+        # os.mkdir(path)
     for comb in combination_list_of_gamemasters:
         count += 1
         number_of_games_over_57percent = 0
@@ -122,7 +130,6 @@ def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
         for i in range(0, number_of_gamemasters):
             comb_evaluation_dataframe[comb[i]] = variations_database[comb[i]]
             # comb_evaluation_dataframe[comb[i]] = variations_database.iloc[:, comb[i]]
-
         for j in range(2, len(comb_evaluation_dataframe)):
             gamemasters_with_2_of_given_game = 0
             for k in range(0, number_of_gamemasters):
@@ -134,11 +141,34 @@ def GenerateMasterDatabase(number_of_gamemasters, list_of_applicants):
                 # list_of_games_over_57percent.append(variations_database[j])
                 list_of_games_over_57percent.append(str(j) + " - " + str(variations_database.iloc[j,0]))
                 number_of_games_over_57percent += 1
-        print(str(number_of_games_over_57percent) + " - " + str(list(comb)) + "\n")
-        print(list(list_of_games_over_57percent), "\n")
-    return 0
+        # print(str(number_of_games_over_57percent) + " - " + str(list(comb)) + "\n")
+        # print(list(list_of_games_over_57percent), "\n")
+        dict_of_results[comb] = number_of_games_over_57percent, list_of_games_over_57percent
+    return dict_of_results
+
+
+def showTop10(result_dictionary):
+    sorted_result_dictionary = sorted(result_dictionary.items(), key= lambda x:x[1], reverse=True)
+    results = sorted_result_dictionary[:10]
+    for position, (key, value) in enumerate(results, start=1):
+        print(f'{position}, {key}, {value}')
+    return results
+
+
+
 
 # DownloadSheets()
 # ProcessCSV()
 # CreateUniformityTable()
-GenerateMasterDatabase(6, list_of_applicants)
+results_dictionary = GenerateMasterDatabase(6, list_of_applicants, date)
+showTop10(results_dictionary)
+
+# :hatching_chick: Szívesen pakolok oda
+# :egg: Ha kell, akkor pakolok oda
+# :panda_face: Szeretnék játékmesterkedni
+# :derelict_house_building: Ha kell, akkor pakolok vissza
+# :bat: Szívesen pakolok vissza
+# :lion_face: Leszek főnök
+# :key: Lesz nálam kulcs
+# :kangaroo: Ot leszek a helyszínen, ha kell, akkor beugrok
+# :unicorn_face: Ott leszek játszani, ha nagyon muszáj, akkor beállok

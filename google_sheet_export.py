@@ -1,15 +1,9 @@
 import gspread
 import csv
-import urllib
-from urllib import request
 from google.oauth2.service_account import Credentials
 import datetime
 import pandas as pd
-from urllib.request import urlopen
-from io import StringIO
 from itertools import combinations
-import os
-import time
 
 today = datetime.date.today()
 csv_file_name = 'kimittud_{}.csv'.format(today)

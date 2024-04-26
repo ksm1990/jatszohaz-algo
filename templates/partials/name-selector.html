@@ -1,0 +1,91 @@
+{% extends "base.html" %} {% block content %}
+<form
+  hx-put="/names"
+  hx-target="#result"
+  hx-swap="innerHTML"
+  hx-indicator="loading"
+>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>🐼<br />Játékmesterkedik</th>
+        <th>🦁 Főni</th>
+        <th>🥚 Pakol oda</th>
+        <th>🦇 Pakol vissza</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for name in names %}
+      <tr>
+        <td>
+          <label for="jm-{{name}}">{{name}}</label>
+        </td>
+        <td>
+          <input type="checkbox" name="jm" id="jm-{{name}}" value="{{name}}" />
+        </td>
+        <td>
+          <input type="checkbox" name="boss" value="{{name}}" />
+        </td>
+        <td>
+          <input type="checkbox" name="to" value="{{name}}" />
+        </td>
+        <td>
+          <input type="checkbox" name="from" value="{{name}}" />
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <fieldset>
+    <legend>Részletek</legend>
+    <div>
+      <label for="foniNemJm"
+        >Van olyan, aki úgy jelentkezett főninek, hogy nem
+        játékmesterkedik?</label
+      >
+      <input type="checkbox" name="foniNemJm" id="foniNemJm" />
+    </div>
+
+    <div>
+      <label for="threshhold-percent"
+        >Hány tudja legalább mindegyik játékot (alapért. 57%)</label
+      >
+      <input
+        type="number"
+        name="threshhold-percent"
+        id="threshhold-percent"
+        min="0"
+        max="100"
+      />
+    </div>
+
+    <div>
+      <label for="jm-count">Hány játékmester legyen?</label>
+      <input type="number" name="jm-count" id="jm-count" min="1" required />
+    </div>
+
+    <div>
+      <label for="event-date">Esemény dátuma</label>
+      <input type="date" name="event-date" id="event-date" required />
+    </div>
+  </fieldset>
+
+  <button>Submit</button>
+</form>
+<p id="loading" class="htmx-indicator">Loading...</p>
+<div id="result"></div>
+
+<style>
+  tr:hover {
+    background-color: ghostwhite;
+  }
+  table {
+    table-layout: auto;
+  }
+  td > input {
+    margin: auto 0;
+  }
+</style>
+{% endblock %}

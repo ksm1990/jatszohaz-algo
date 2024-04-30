@@ -57,7 +57,8 @@ sheet_id = "1fwhZxPtuP2MSBkTXJRSH-plXGV42mF-HlQPf4KSpFwE"
 
 def initialize_gspread(service_account_file_path: str):
     credentials = Credentials.from_service_account_file(
-        service_account_file_path, scopes=["https://www.googleapis.com/auth/spreadsheets"]
+        service_account_file_path,
+        scopes=["https://www.googleapis.com/auth/spreadsheets"],
     )
     return gspread.authorize(credentials)
 
@@ -73,12 +74,15 @@ def google_worksheet_to_df(sheet_id: str, worksheet_id: str | int):
 def get_beosztas_df():
     return google_worksheet_to_df(sheet_id, beo_worksheet_id)
 
+
 def get_kimittud_df():
     return google_worksheet_to_df(sheet_id, kimittud_worksheet_id)
 
-def process_beo_df(beo_df: pd.DataFrame): 
+
+def process_beo_df(beo_df: pd.DataFrame):
     beo_df.drop(beo_df.columns[[0, 1, 3, 4, 5, 6, 7, 8, 9, -1]], axis=1, inplace=True)
     beo_df.dropna(subset="ÁDÁM", inplace=True)
+
 
 def DownloadSheets():
 
@@ -94,14 +98,14 @@ def DownloadSheets():
     data = worksheet.get_all_values()
     # Retrieve all values from the worksheet
     # Write the data to a CSV file
-    with open(csv_file_name, "w", newline="") as csvfile:
+    with open(csv_file_name, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data)
     print(f"CSV file '{csv_file_name}' saved successfully!")
 
 
 def ProcessCSV():
-    df = pd.read_csv(csv_file_name, encoding="ISO-8859-1")
+    df = pd.read_csv(csv_file_name, encoding="utf-8")
     # df = pd.read_csv(csv_file_name)
     df.drop(df.columns[[0, 1, 3, 4, 5, 6, 7, 8, 9, -1]], axis=1, inplace=True)
     # delete empty rows based on the last value of column 'ÁDÁM':
@@ -147,12 +151,13 @@ def CreateUniformityTable():
 def GenerateMasterDatabase(
     number_of_gamemasters: int, list_of_applicants: list[str], date
 ):
-    variations_database = pd.read_csv(processed_name)
-    # print(variations_database)
+    variations_database = pd.read_csv(processed_name, encoding="utf-8")
+    print(variations_database.columns)
     # drop unnecessary columns: last 4 and first
     variations_database.drop(
         variations_database.columns[[0, -1, -2, -3, -4]], axis=1, inplace=True
     )
+    # print(variations_database.columns)
     # variations_database.drop(variations_database.index[0], inplace=True)
     # variations_database.drop(variations_database.index[0], inplace=True)
     # dataframe info:
@@ -198,7 +203,7 @@ def GenerateMasterDatabase(
         for j in range(2, len(comb_evaluation_dataframe)):
             gamemasters_with_2_of_given_game = 0
             for k in range(0, number_of_gamemasters):
-                # print(comb_evaluation_dataframe.iloc[k,j])
+                print(comb_evaluation_dataframe.iloc[k, j])
                 if int(comb_evaluation_dataframe.iloc[j, k]) == 2:
                     gamemasters_with_2_of_given_game += 1
             # print(gamemasters_with_2_of_given_game)
@@ -228,14 +233,14 @@ def showTop10(result_dictionary):
 
 
 if __name__ == "__main__":
-    # results_dictionary = GenerateMasterDatabase(6, list_of_applicants, date)
+    # DownloadSheets()
+    ProcessCSV()
+    results_dictionary = GenerateMasterDatabase(6, list_of_applicants, date)
     # showTop10(results_dictionary)
 
-    beo_df = get_beosztas_df()
-    print(beo_df)
+    # beo_df = get_beosztas_df()
+    # print(beo_df)
 
-# DownloadSheets()
-# ProcessCSV()
 # CreateUniformityTable()
 
 

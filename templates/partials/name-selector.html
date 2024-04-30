@@ -1,9 +1,9 @@
 {% extends "base.html" %} {% block content %}
 <form
-  hx-put="/names"
+  hx-post="/names"
   hx-target="#result"
   hx-swap="innerHTML"
-  hx-indicator="loading"
+  hx-indicator="#loading"
 >
   <table>
     <thead>
@@ -62,8 +62,8 @@
     </div>
 
     <div>
-      <label for="jm-count">Hány játékmester legyen?</label>
-      <input type="number" name="jm-count" id="jm-count" min="1" required />
+      <label for="gm-count">Hány játékmester legyen?</label>
+      <input type="number" name="gm-count" id="gm-count" min="1" required />
     </div>
 
     <div>

@@ -1,6 +1,7 @@
 from itertools import combinations
 import pandas as pd
 import numpy as np
+import math
 
 
 def create_gm_combinations_df(
@@ -13,7 +14,9 @@ def create_gm_combinations_df(
 
     dict_of_results = {}
 
-    min_gm_count_for_game = round(number_of_gamemasters * threshhold_percent / 100)
+    min_gm_count_for_game = math.ceil(number_of_gamemasters * threshhold_percent / 100)
+
+    print(min_gm_count_for_game)
 
     combination_list_of_gamemasters = list(
         combinations(list_of_applicants, number_of_gamemasters)
@@ -47,8 +50,8 @@ def create_gm_combinations_df(
 
 def calc_beo_weight(days_before: int):
     if days_before == 0:
-        return 1
-    return np.max([0, 1 - 0.5 * np.log(days_before)])
+        return 100
+    return 1 - (0.5 * np.log10(days_before))
 
 
 def calc_beo_weights(cleaned_beo_df: pd.DataFrame):

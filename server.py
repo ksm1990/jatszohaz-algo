@@ -44,10 +44,9 @@ def print_names():
         lambda r: weights[list(r.name)].sum(), axis=1
     )
 
+    gm_combinations = gm_combinations[gm_combinations["count"] > 85]
+
     return (
-        gm_combinations.sort_values(
-            by=["beo_weights", "count"], ascending=[True, False]
-        )
-        .head(10)
-        .to_html()
+        weights.to_frame().to_html()
+        + gm_combinations.sort_values(by=["beo_weights"], ascending=True).to_html()
     )

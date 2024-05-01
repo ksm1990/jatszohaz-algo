@@ -11,16 +11,13 @@ def cleanup_beo_df(
     filtered = beo_df.drop(beo_df.columns[[1, 2, -1, -2, -3, -4, -5]], axis=1)
     filtered.drop([0, 1, 2], inplace=True)
 
-    day_of_event = datetime.datetime.today()
     min_date = day_of_event - datetime.timedelta(days=max_days_past)
 
     filtered["Dátum"] = pd.to_datetime(filtered["Dátum"], format="%Y.%m.%d.")
 
-    filtered = filtered.loc[
-        (filtered["Dátum"] > min_date) & (filtered["Dátum"] < day_of_event)
-    ]
+    filtered = filtered.loc[(filtered["Dátum"] > min_date)]
 
-    filtered["days_before"] = (day_of_event - filtered["Dátum"]).dt.days
+    filtered["days_before"] = abs((day_of_event - filtered["Dátum"]).dt.days)
 
     filtered.set_index("Dátum", inplace=True)
 

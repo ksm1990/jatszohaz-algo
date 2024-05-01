@@ -3,7 +3,12 @@ from flask import render_template
 from flask import request
 import datetime
 
+import pandas as pd
+
+from src.clean_data import clean_kimittud_df, cleanup_beo_df
+from src.gsheet_download import download_data
 from src.constants import NAMES
+from src.utils import calc_beo_weights, create_gm_combinations_df
 
 
 app = Flask(__name__)
@@ -17,16 +22,32 @@ def hello_world():
 @app.route("/names", methods=["POST"])
 def print_names():
     jm_candidates = request.form.getlist("jm")
-    carries_to = request.form.getlist("to")
-    carries_from = request.form.getlist("from")
-    bosses = request.form.getlist("boss")
+    # carries_to = request.form.getlist("to")
+    # carries_from = request.form.getlist("from")
+    # bosses = request.form.getlist("boss")
     gm_count = request.form.get("gm-count")
     event_date = request.form.get("event-date")
 
-    # try:
-    #     gm_count = int(gm_count)
-    #     event_date = datetime.datetime.strptime(event_date, "%Y-%m-%d")
-    # except ValueError:
-    #     return "gm_count must be an integer"
+    beo_raw, kimittud_raw = download_data()
+    beo = cleanup_beo_df(
+        beo_raw, day_of_event=datetime.datetime.fromisoformat(event_date)
+    )
+    kimittud = clean_kimittud_df(kimittud_raw)
 
-    return f"jm: {jm_candidates}, to: {carries_to}, from: {carries_from}, boss: {bosses}, gm_count: {gm_count}, event_date: {event_date}"
+    gm_combinations: pd.DataFrame = create_gm_combinations_df(
+        int(gm_count), jm_candidates, kimittud
+    )
+
+    weights = calc_beo_weights(beo)
+
+    gm_combinations["beo_weights"] = gm_combinations.apply(
+        lambda r: weights[list(r.name)].sum(), axis=1
+    )
+
+    return (
+        gm_combinations.sort_values(
+            by=["beo_weights", "count"], ascending=[True, False]
+        )
+        .head(10)
+        .to_html()
+    )

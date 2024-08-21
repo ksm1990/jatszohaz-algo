@@ -22,11 +22,14 @@ def hello_world():
 @app.route("/names", methods=["POST"])
 def print_names():
     jm_candidates = request.form.getlist("jm")
-    # carries_to = request.form.getlist("to")
-    # carries_from = request.form.getlist("from")
-    # bosses = request.form.getlist("boss")
+    carries_to = request.form.getlist("to")
+    carries_from = request.form.getlist("from")
+    bosses = request.form.getlist("boss")
     gm_count = request.form.get("gm-count")
     event_date = request.form.get("event-date")
+    must_have_boss = request.form.get("must-have-boss") == "on"
+    threshhold_percent = request.form.get("threshhold-percent", type=int)
+    game_min_count = request.form.get("game-min-count", type=int, default=85)
 
     beo_raw, kimittud_raw = download_data()
     beo = cleanup_beo_df(
@@ -34,9 +37,17 @@ def print_names():
     )
     kimittud = clean_kimittud_df(kimittud_raw)
 
-    gm_combinations: pd.DataFrame = create_gm_combinations_df(
-        int(gm_count), jm_candidates, kimittud
-    )
+    try:
+        gm_combinations: pd.DataFrame = create_gm_combinations_df(
+            int(gm_count),
+            jm_candidates,
+            kimittud,
+            remove_without_boss=must_have_boss,
+            list_of_bosses=bosses,
+            threshhold_percent=threshhold_percent,
+        )
+    except Exception as e:
+        return f"Error: {e.with_traceback(None)}"
 
     weights = calc_beo_weights(beo)
 
@@ -44,7 +55,7 @@ def print_names():
         lambda r: weights[list(r.name)].sum(), axis=1
     )
 
-    gm_combinations = gm_combinations[gm_combinations["count"] > 85]
+    gm_combinations = gm_combinations[gm_combinations["count"] > game_min_count]
 
     return (
         weights.to_frame().to_html()

@@ -40,17 +40,25 @@
 
   <fieldset>
     <legend>Részletek</legend>
-    <div>
+    <!-- <div>
       <label for="foniNemJm"
         >Van olyan, aki úgy jelentkezett főninek, hogy nem
         játékmesterkedik?</label
       >
       <input type="checkbox" name="foniNemJm" id="foniNemJm" />
+    </div> -->
+
+    <div>
+      <label for="must-have-boss"
+        >Legyen mindenképp egy főni a kiválasztott játékmesterek között?</label
+      >
+      <input type="checkbox" name="must-have-boss" id="must-have-boss" />
     </div>
 
     <div>
       <label for="threshhold-percent"
-        >Hány tudja legalább mindegyik játékot (alapért. 57%)</label
+        >A kiválasztott játékmesterek hány %-a tudja legalább mindegyik játékot?
+        (alapért. 57%)</label
       >
       <input
         type="number"
@@ -58,12 +66,28 @@
         id="threshhold-percent"
         min="0"
         max="100"
+        value="57"
+        required
       />
     </div>
 
     <div>
-      <label for="gm-count">Hány játékmester legyen?</label>
+      <label for="gm-count">Hány játékmester kell az eseményre?</label>
       <input type="number" name="gm-count" id="gm-count" min="1" required />
+    </div>
+
+    <div>
+      <label for="game-min-count"
+        >Legalább hány játékot tudjunk vinni? (alapért. 85)</label
+      >
+      <input
+        type="number"
+        name="game-min-count"
+        id="game-min-count"
+        min="1"
+        value="85"
+        required
+      />
     </div>
 
     <div>

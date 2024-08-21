@@ -10,20 +10,26 @@ def create_gm_combinations_df(
     cleaned_kimittud_df: pd.DataFrame,
     threshhold_percent: int = 57,
     heavy_threshhold_count: int = 2,
+    remove_without_boss: bool = True,
+    list_of_bosses: list[str] = [],
 ):
 
     dict_of_results = {}
 
     min_gm_count_for_game = math.ceil(number_of_gamemasters * threshhold_percent / 100)
 
-    print(min_gm_count_for_game)
-
-    combination_list_of_gamemasters = list(
+    gamemaster_combinations = list(
         combinations(list_of_applicants, number_of_gamemasters)
     )
 
-    for comb in combination_list_of_gamemasters:
+    if remove_without_boss:
+        gamemaster_combinations = [
+            comb
+            for comb in gamemaster_combinations
+            if any(b in comb for b in list_of_bosses)
+        ]
 
+    for comb in gamemaster_combinations:
         game_counts = cleaned_kimittud_df[list(comb)].sum(axis=1)
         list_of_games_over_threshhold = (
             cleaned_kimittud_df[game_counts > min_gm_count_for_game].iloc[:, 0].tolist()

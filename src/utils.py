@@ -12,7 +12,7 @@ def create_gm_combinations_df(
     heavy_threshhold_count: int = 2,
     remove_without_boss: bool = True,
     list_of_bosses: list[str] = [],
-):
+) -> pd.DataFrame:
 
     dict_of_results = {}
 

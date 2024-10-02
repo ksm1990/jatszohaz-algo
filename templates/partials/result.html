@@ -1,1 +1,12 @@
+<h2>Utolsó betöltött beosztások</h2>
 
+{{ beo | safe }}
+
+<h2>Beosztás súlyok</h2>
+
+{{ beo_weights | safe }}
+
+<h2>Lehetséges kombinációk {{ gm_count }} játékmesterre {{ min_game_count }} játék felett</h2>
+<p>Ha egy csapat régebben játékmesterkedett, előrébb kerül a listában (kisebb lesz a súlya)</p>
+
+{{ gm_combinations | safe }}

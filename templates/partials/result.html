@@ -6,7 +6,19 @@
 
 {{ beo_weights | safe }}
 
-<h2>Lehetséges kombinációk {{ gm_count }} játékmesterre {{ min_game_count }} játék felett</h2>
-<p>Ha egy csapat régebben játékmesterkedett, előrébb kerül a listában (kisebb lesz a súlya)</p>
+<h2>
+  Lehetséges kombinációk {{ gm_count }} játékmesterre {{ min_game_count }} játék
+  felett
+</h2>
+<p>
+  Ha egy csapat régebben játékmesterkedett, előrébb kerül a listában (kisebb
+  lesz a súlya)
+</p>
 
 {{ gm_combinations | safe }}
+
+<style>
+  table {
+    overflow-x: scroll;
+  }
+</style>

@@ -15,6 +15,7 @@ google-auth = "^2.35.0"
 pandas = "^2.2.3"
 python-dotenv = "^1.0.1"
 gunicorn = "^23.0.0"
+watchdog = "^5.0.3"
 
 
 [build-system]

@@ -4,13 +4,20 @@ import pandas as pd
 from src.constants import *
 import os
 import json
+from dotenv import load_dotenv
 
 
 def initialize_gspread():
+    load_dotenv()
     credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     if not credentials_json:
         raise ValueError("GOOGLE_APPLICATION_CREDENTIALS in env is not set")
-    credentials_info = json.loads(credentials_json)
+    try:
+        credentials_info = json.loads(credentials_json)
+    except json.JSONDecodeError:
+        raise ValueError(
+            "GOOGLE_APPLICATION_CREDENTIALS is not a valid JSON: " + credentials_json
+        )
     credentials = Credentials.from_service_account_info(
         credentials_info,
         scopes=["https://www.googleapis.com/auth/spreadsheets"],

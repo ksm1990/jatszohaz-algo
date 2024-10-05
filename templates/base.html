@@ -5,8 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Játszóház algo</title>
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+      body {
+        display: block;
+      }
+    </style>
   </head>
   <body>
     {% block content %}{% endblock %}
+    <div id="error-message"></div>
+    <script>
+      document.body.addEventListener("htmx:afterOnLoad", function (event) {
+        if (event.detail.xhr.status === 500) {
+          document.getElementById("error-message").innerHTML =
+            event.detail.xhr.responseText;
+        } else {
+          document.getElementById("error-message").innerHTML = "";
+        }
+      });
+    </script>
   </body>
 </html>

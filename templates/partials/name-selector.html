@@ -4,7 +4,7 @@
   hx-target="#result"
   hx-swap="innerHTML"
   hx-indicator="#loading"
-  style="display: flex; gap: 4rem; width: 100%"
+  style="display: flex; gap: 2rem; width: 100%"
 >
   <table>
     <thead>
@@ -48,15 +48,32 @@
     <legend>Beállítások</legend>
 
     <div>
-      <label for="must-have-boss"
-        >Legyen mindenképp egy főni a kiválasztott játékmesterek között?</label
-      >
-      <input type="checkbox" name="must-have-boss" id="must-have-boss" />
+      <label for="event-date" class="required">Esemény dátuma</label>
+      <input type="date" name="event-date" id="event-date" required />
     </div>
 
     <div>
-      <label for="threshold-percent"
-        >A kiválasztott játékmesterek hány %-a tudja legalább mindegyik játékot?
+      <label for="gm-count" class="required">Hány játékmester kell az eseményre?</label>
+      <input type="number" name="gm-count" id="gm-count" min="1" required />
+    </div>
+
+    <div>
+      <label for="game-min-count" class="required"
+        >Legalább hány játékot tudjunk vinni? (Egy hétfői eseményre pl. minimum 85 játék)</label
+      >
+      <input
+        type="number"
+        name="game-min-count"
+        id="game-min-count"
+        min="1"
+        value="85"
+        required
+      />
+    </div>
+
+    <div>
+      <label for="threshold-percent" class="required"
+        >A kiválasztott játékmesterek legalább hány %-a tudja mindegyik játékot?
         (alapért. 57%)</label
       >
       <input
@@ -66,25 +83,6 @@
         min="0"
         max="100"
         value="57"
-        required
-      />
-    </div>
-
-    <div>
-      <label for="gm-count">Hány játékmester kell az eseményre?</label>
-      <input type="number" name="gm-count" id="gm-count" min="1" required />
-    </div>
-
-    <div>
-      <label for="game-min-count"
-        >Legalább hány játékot tudjunk vinni? (alapért. 85)</label
-      >
-      <input
-        type="number"
-        name="game-min-count"
-        id="game-min-count"
-        min="1"
-        value="85"
         required
       />
     </div>
@@ -103,7 +101,8 @@
 
     <div>
       <label for="min_gm_carries_from_count">
-        Legalább hány visszafelé pakoló legyen a kiválasztott játékmesterek között?
+        Legalább hány visszafelé pakoló legyen a kiválasztott játékmesterek
+        között?
       </label>
       <input
         type="number"
@@ -114,31 +113,27 @@
     </div>
 
     <div>
-      <label for="event-date">Esemény dátuma</label>
-      <input type="date" name="event-date" id="event-date" required />
+      <label for="must-have-boss"
+        >Legyen mindenképp egy főni a kiválasztott játékmesterek között?</label
+      >
+      <input type="checkbox" name="must-have-boss" id="must-have-boss" />
     </div>
+
     <p>
       Újabb futattás előtt be kell írni a választott csapatot a beo-s
-      táblázatba. Az eredmények között látni fogod a legfrissebb betöltött
+      táblázatba. Az eredmények felett látni fogod a legfrissebb betöltött
       beosztásokat, érdemes ellenőrizni, hogy betöltötte-e a legújabbat.
     </p>
     <button>Számolj!</button>
-    <p id="loading" class="htmx-indicator">Loading...</p>
+    <p id="loading" class="htmx-indicator">Töltés...</p>
   </fieldset>
 </form>
 <div id="result"></div>
 
-<!-- <style>
-  tr:hover {
-    background-color: ghostwhite;
+<style>
+  .required::after {
+    content:" *";
+    color: red;
   }
-
-  table {
-    table-layout: auto;
-  }
-
-  td > input {
-    margin: auto 0;
-  }
-</style> -->
+</style>
 {% endblock %}

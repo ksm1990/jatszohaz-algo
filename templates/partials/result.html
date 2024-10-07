@@ -1,8 +1,11 @@
-<h2>Utolsó betöltött beosztások</h2>
+<h2>Legfrissebb betöltött beosztások</h2>
+<p>Itt ellenőrizheted, hogy az algoritmus jól olvasta-e be a BEO táblázatot.</p>
 
 {{ beo | safe }}
 
 <h2>Beosztás súlyok</h2>
+<p>Minél többet és frissebben játékmesterkedett valaki, annál nagyobb számot (súlyt) rendelünk hozzá. 
+  A csapatépítők és kitelepülések ötödannyit adnak ehhez a számhoz, mint a hétfői játékmesterkedések.</p>
 
 {{ beo_weights | safe }}
 
@@ -12,13 +15,15 @@
 </h2>
 <p>
   Ha egy csapat régebben játékmesterkedett, előrébb kerül a listában (kisebb
-  lesz a súlya)
+  lesz a súlya, ezt a beo_weights oszlopban látjátok). 
+  A count oszlopban azt látjátok, hogy a csapat hány játékot tud elvinni úgy, hogy mindegyik játékot a csapat legalább 57%-a ismeri.
 </p>
 
 {{ gm_combinations | safe }}
 
 <style>
   table {
-    overflow-x: scroll;
+    display: block;
+    overflow-x: auto;
   }
 </style>

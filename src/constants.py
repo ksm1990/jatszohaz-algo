@@ -3,7 +3,7 @@ BEO_WORKSHEET_ID = 2121169814
 KIMITTUD_WORKSHEET_ID = 858480548
 MASTER_SHEET_ID = "1fwhZxPtuP2MSBkTXJRSH-plXGV42mF-HlQPf4KSpFwE"
 NAMES = [
-    "ÁDÁM",
+    # "ÁDÁM",
     "ALEX",
     "BALU",
     "BELLA",
@@ -28,4 +28,7 @@ NAMES = [
     "TAKI",
     "VANDA",
     "VERONKA",
+    "MARIANN",
+    "SP",
+    "ROSI",
 ]

@@ -98,3 +98,7 @@ def print_names():
         min_game_count=game_min_count,
         gm_count=gm_count,
     )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

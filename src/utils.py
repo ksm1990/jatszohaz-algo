@@ -19,13 +19,14 @@ def cleanup_beo_df(
 ) -> pd.DataFrame:
     # filtered = beo_df.drop(beo_df.columns[[1, 2, -1, -2, -3, -4, -5]], axis=1)
     filtered = beo_df.copy()  # Create a copy to avoid modifying the original DataFrame
-    filtered = filtered.iloc[3:]  # Remove first 3 rows more efficiently
+    filtered = filtered.iloc[4:]  # Remove first 3 rows more efficiently
 
     min_date = day_of_event - datetime.timedelta(days=max_days_past)
 
     filtered["Dátum"] = pd.to_datetime(filtered["Dátum"], format="%Y.%m.%d.")
 
     filtered = filtered[filtered["Dátum"] > min_date]
+    filtered = filtered[filtered["Dátum"] < day_of_event]
 
     filtered["days_before"] = (day_of_event - filtered["Dátum"]).dt.days.abs()
 
@@ -48,7 +49,7 @@ def cleanup_beo_df(
     return filtered
 
 
-def clean_kimittud_df(kimittud_df: pd.DataFrame, count_of_retired_gms: int = 4):
+def clean_kimittud_df(kimittud_df: pd.DataFrame):
     df = kimittud_df.copy()
     df.drop(
         [
@@ -67,11 +68,14 @@ def clean_kimittud_df(kimittud_df: pd.DataFrame, count_of_retired_gms: int = 4):
     )
     # delete empty rows based on the last value of column 'ÁDÁM':
 
-    column_to_check = "ÁDÁM"
     df.replace("", np.nan, inplace=True)
-    df.dropna(subset=column_to_check, inplace=True)
 
-    df.drop(df.columns[-count_of_retired_gms:], axis=1, inplace=True)
+    print(len(df))
+    column_to_check = "ALEX"
+    df.dropna(subset=column_to_check, inplace=True)
+    print(len(df))
+
+    # df.drop(df.columns[-count_of_retired_gms:], axis=1, inplace=True)
 
     df.drop([0, 1], inplace=True)
 
@@ -92,7 +96,6 @@ def create_gm_combinations_df(
     remove_without_boss: bool,
     list_of_bosses: list[str],
 ) -> pd.DataFrame:
-
     dict_of_results = {}
 
     min_gm_count_for_game = math.ceil(number_of_gamemasters * threshhold_percent / 100)
@@ -115,8 +118,7 @@ def create_gm_combinations_df(
         )
         list_of_heavies_over_threshhold = (
             cleaned_kimittud_df[
-                (game_counts >= heavy_threshhold_count)
-                & (cleaned_kimittud_df["Heavy"] == True)
+                (game_counts >= heavy_threshhold_count) & (cleaned_kimittud_df["Heavy"])
             ]
             .iloc[:, 0]
             .tolist()
@@ -134,11 +136,9 @@ def create_gm_combinations_df(
 
 
 def calc_beo_weights(cleaned_beo_df: pd.DataFrame):
-
     weights = pd.Series()
 
     for name, values in cleaned_beo_df.items():
-
         if values.dtype != np.dtypes.StrDType:
             continue
 
@@ -150,7 +150,7 @@ def calc_beo_weights(cleaned_beo_df: pd.DataFrame):
             weights[name] = cleaned_beo_df.apply(
                 lambda r: (
                     r["complete_weight"]
-                    if type(r[name]) == str and "j" in r[name]
+                    if isinstance(r[name], str) and "j" in r[name]
                     else 0
                 ),
                 axis=1,

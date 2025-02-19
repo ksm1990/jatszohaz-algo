@@ -26,7 +26,7 @@ def cleanup_beo_df(
     filtered["Dátum"] = pd.to_datetime(filtered["Dátum"], format="%Y.%m.%d.")
 
     filtered = filtered[filtered["Dátum"] > min_date]
-    filtered = filtered[filtered["Dátum"] < day_of_event]
+    # filtered = filtered[filtered["Dátum"] < day_of_event]
 
     filtered["days_before"] = (day_of_event - filtered["Dátum"]).dt.days.abs()
 
